@@ -120,7 +120,6 @@ async function startScraping() {
     }
 };
 
-
 function sendTemplateEmail(subject, title, description) {
     const msg = {
       to: 'leandro.rios@upr.edu',
@@ -133,8 +132,11 @@ function sendTemplateEmail(subject, title, description) {
       },
     };
     sgMail.send(msg);
-}
+};
 
-// sendTemplateEmail('test', 'url', 'joder');
-    
-// startScraping();
+
+const startScraping = new CronJob('0 */5 * * *', function () {
+    startScraping();
+});
+
+startScraping.start();
