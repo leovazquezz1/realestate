@@ -4,6 +4,7 @@ var Promise = require('promise');
 const cheerio = require('cheerio');
 const Post = require('../models/Post');
 const puppeteer = require('puppeteer');
+const CronJob = require('cron').CronJob;
 const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -135,8 +136,8 @@ function sendTemplateEmail(subject, title, description) {
 };
 
 
-const startScraping = new CronJob('0 */5 * * *', function () {
+const startScrapingJob = new CronJob('0 */5 * * *', function () {
     startScraping();
 });
 
-startScraping.start();
+startScrapingJob.start();
