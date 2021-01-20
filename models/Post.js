@@ -6,7 +6,8 @@ var PostSchema = new Schema({
     id: {type: String, unique: true},
     url: String,
     price: Number,
-    description: String
+    description: String,
+    image: String
 }, {
     timestamps: true
 });
