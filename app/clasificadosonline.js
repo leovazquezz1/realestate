@@ -8,6 +8,7 @@ const CronJob = require('cron').CronJob;
 const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const defaultImageUrl = 'https://imgcache.clasificadosonline.com/\media\defaultnew.png';
 
 var scrape = async (place, type, offset) => {
     const browser = await puppeteer.launch();
@@ -44,17 +45,23 @@ var scrape = async (place, type, offset) => {
         var content = await page.content();
         var $ = cheerio.load(content);
 
+        var postsImage = $(".Ver12C");
         var posts = $(".Ver14");
+        var postsImage = $(".Ver12C");
 
         var allPosts = [];
         for (var i = 0; i < posts.length; i++) {
             var post = $(posts[i]);
+            var postImage = $(postsImage[i]);
 
+            var image = postImage.find("img").attr('src');
             var aTag = post.find("a").attr('href');
             var price = post.find("span span").text();
             var description = post.find("strong").text();
 
             if (aTag) {
+
+            if (aTag && image != defaultImageUrl) {
 
                 var postId = aTag.match(/\d+/);
                 var parsePrice = price.match(/\d+/)[0];
@@ -62,6 +69,7 @@ var scrape = async (place, type, offset) => {
                 allPosts.push({
                     id: postId[0],
                     url: aTag,
+                    image: image,
                     price: parsePrice,
                     description
                 });
