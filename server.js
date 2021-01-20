@@ -11,6 +11,10 @@ const models = join(__dirname, 'models');
 var port = process.env.PORT || 3009;
 const app = express();
 
+app.get('/wake', (req, res) => {
+    res.send('Hello World');
+});
+
 // Bootstrap models
 fs.readdirSync(models)
     .filter(file => ~file.search(/^[^\.].*\.js$/))
