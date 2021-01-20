@@ -11,7 +11,7 @@ const models = join(__dirname, 'models');
 var port = process.env.PORT || 3009;
 const app = express();
 
-app.get('/wake', (req, res) => {
+app.get('/', (req, res) => {
     res.send('Hello World');
 });
 
