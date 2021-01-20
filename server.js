@@ -38,7 +38,7 @@ var options = {
 
 mongoose.Promise = require('bluebird');
 
-mongoose.connect(encodeURI(process.env.MONGOHQ_URL), { useNewUrlParser: true });
+mongoose.connect(encodeURI(process.env.MONGOHQ_URL), options);
 
 var db = mongoose.connection;
 
