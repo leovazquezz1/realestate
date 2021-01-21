@@ -45,7 +45,6 @@ var scrape = async (place, type, offset) => {
         var content = await page.content();
         var $ = cheerio.load(content);
 
-        var postsImage = $(".Ver12C");
         var posts = $(".Ver14");
         var postsImage = $(".Ver12C");
 
@@ -58,8 +57,6 @@ var scrape = async (place, type, offset) => {
             var aTag = post.find("a").attr('href');
             var price = post.find("span span").text();
             var description = post.find("strong").text();
-
-            if (aTag) {
 
             if (aTag && image != defaultImageUrl) {
 
@@ -94,8 +91,8 @@ var scrape = async (place, type, offset) => {
         } else {
             return false
         }
-    } catch (err) {
-        console.log(err);
+    } catch (e) {
+        console.log(e);
         return false
     }
 };
@@ -141,8 +138,19 @@ function sendTemplateEmail(subject, title, description) {
         description: description
       },
     };
-    sgMail.send(msg);
+    var emailSent = sgMail.send(msg);
+
+    emailSent.then(function (message) {
+        console.log(message);
+    })
+    .catch(function (err) {
+        console.log(err);
+    })
 };
+
+// startScraping();
+
+// sendTemplateEmail('APA', 'test', 'test');
 
 
 const startScrapingJob = new CronJob('0 */5 * * *', function () {
