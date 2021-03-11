@@ -11,20 +11,18 @@ const models = join(__dirname, 'models');
 var port = process.env.PORT || 3009;
 const app = express();
 
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
-
 // Bootstrap models
 fs.readdirSync(models)
     .filter(file => ~file.search(/^[^\.].*\.js$/))
     .forEach(file => require(join(models, file)));
 
+require('./config/routes')(app);
+
 function listen() {
 
     let server = app.listen(port);
 
-    console.log('Send Text Dash started on port ' + port + ' at ' + new Date().getHours());
+    console.log('Real Estate Scraper started on port ' + port + ' at ' + new Date().getHours());
 
 };
 

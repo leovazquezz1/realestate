@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const Schema = mongoose.Schema;
+const dataTables = require('mongoose-datatables');
 
 var PostSchema = new Schema({
     id: {type: String, unique: true},
@@ -11,5 +12,7 @@ var PostSchema = new Schema({
 }, {
     timestamps: true
 });
+
+PostSchema.plugin(dataTables);
 
 module.exports = mongoose.model('Post', PostSchema);

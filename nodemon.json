@@ -15,7 +15,8 @@
         "ENV" : "development",
         "PAGE_URL": "http://localhost:3008",
         "oMONGOHQ_URL" : "mongodb://localhost/realestate",
-        "MONGOHQ_URL" : "mongodb+srv://leandro:RfdqQtnnp8BDLFNH@realestate.v2ki1.mongodb.net/realestate?retryWrites=true&w=majority",
+        "oMONGOHQ_URL" : "mongodb+srv://leandro:RfdqQtnnp8BDLFNH@realestate.v2ki1.mongodb.net/realestate?retryWrites=true&w=majority",
+        "MONGOHQ_URL": "mongodb+srv://realestate:mWmNxb1WjiUdeJIA@miner.c4piw.mongodb.net/realestate?retryWrites=true&w=majority",
         "SENDGRID_API_KEY" : "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"
     }
   }

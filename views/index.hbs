@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+        <style>
+            table{
+                table-layout: fixed;
+            }
+
+            table.dub-table {
+                border-collapse: collapse;
+                width:auto;
+            }
+
+            th {
+                border-bottom: 1px solid #ccc;
+            }
+
+            .pagination li {
+                display:inline-block;
+                padding:5px;
+            }
+
+            th h1 {
+                text-align: center;
+            }
+
+
+            tr
+            {
+                border-bottom: 1px solid #ccc;
+            }
+
+            td {
+                padding: 10px;
+                word-wrap:break-word;
+            }
+
+            input {
+                border: solid 1px #ccc;
+                border-radius: 5px;
+                padding: 7px 14px;
+                margin-bottom: 10px
+            }
+
+            input:focus {
+                outline: none;
+                border-color: #aaa;
+            }
+
+            .sort, button {
+                border: none;
+                display: inline-block;
+                color: black;
+                background-color: transparent;
+                text-decoration: none;
+                height: 30px;
+                font-size: 0.9em;
+                font-weight: bold;
+            }
+
+            .sort:hover {
+                text-decoration: none;
+            }
+
+            .sort:focus {
+                outline: none;
+            }
+
+            .sort:after {
+                display: inline-block;
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-bottom: 5px solid transparent;
+                content: "";
+                position: relative;
+                top: -10px;
+                right: -5px;
+            }
+
+            .sort.asc:after {
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid #000;
+                content: "";
+                position: relative;
+                top: 4px;
+                right: -5px;
+            }
+
+            .sort.desc:after {
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-bottom: 5px solid #000;
+                content: "";
+                position: relative;
+                top: -4px;
+                right: -5px;
+            }
+
+            .truncate {
+                text-overflow:ellipsis;
+                overflow: hidden;
+                max-width:1px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="content" class="body-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <h1>Clasificados</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <table id="drivers-table" class="table table-striped display" style="table-layout: fixed" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Price</th>
+                                <th>Description</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="//cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css">
+<script type="text/javascript" src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+<script type="text/javascript">
+
+    clasificadosView();
+
+    function clasificadosView() {
+        var table = $('#drivers-table').DataTable({
+            dom : "<'row'<'col-sm-6'l<'#driver-filter'>B><'col-sm-6'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            processing: true,
+            serverSide: true,
+            bDestroy: true,
+            scrollX: true,
+            rowId: '_id',
+            order: [[0, 'desc']],
+            lengthMenu: [[25, 50, 100, 0], [25, 50, 100, 'All']],
+            ajax: {
+                    url : "/clasificados-data",
+                    type: "POST",
+                    data : {}
+            },
+            columns: [
+                { "data": "price", "width": "10px" },
+                { "data": "description", "width": "120px" },
+                { "data": "image", "width": "120px" }
+            ],
+            columnDefs: [
+                {
+                    render: function (data, type, row){
+                        return '$' + data;
+                    },
+                    targets: 0
+                },
+                {
+                    render: function (data, type, row){
+                        return '<a href="' + row.url + '">' + data + '</a>';
+                    },
+                    targets: [0,1]
+                },
+                {
+                    render: function (data, type, row){
+                        return '<img src="' + data + '" alt="Image">';
+                    },
+                    targets: 2
+                },
+                {
+                    defaultContent: '',
+                    targets: [0,1,2]
+                },
+                {
+                    bSortable : false,
+                    aTargets : [ "no-sort" ]
+                }
+            ],
+            buttons: [
+                'excel', 'csv', 'print'
+            ]
+        });
+    };
+
+</script>

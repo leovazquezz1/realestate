@@ -10,6 +10,32 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const defaultImageUrl = 'https://imgcache.clasificadosonline.com/\media\defaultnew.png';
 
+exports.index = function (req, res) {
+    res.render('index.hbs', {layout: false});
+};
+
+exports.clasificadosData = function (req, res) {
+
+    var sortByColumn = "{ '" + req.body.columns[req.body.order[0].column].data + "': '" +req.body.order[0].dir + "' }";
+    var validSort = JSON.stringify(eval("(" + sortByColumn + ")"));
+
+    var options = {
+        find: {},
+        limit: req.body.length,
+        skip: req.body.start,
+        sort: JSON.parse(validSort),
+        search: {}
+    };
+
+    Post.dataTables(options).then(function (table) {
+        res.json({
+            data: table.data,
+            recordsFiltered: table.total,
+            recordsTotal: table.total
+        });
+    });
+};
+
 var scrape = async (place, type, offset) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -53,12 +79,15 @@ var scrape = async (place, type, offset) => {
             var post = $(posts[i]);
             var postImage = $(postsImage[i]);
 
+            console.log(post.html());
+            console.log(postImage.html());
+
             var image = postImage.find("img").attr('src');
             var aTag = post.find("a").attr('href');
             var price = post.find("span span").text();
             var description = post.find("strong").text();
 
-            if (aTag && image != defaultImageUrl) {
+            if (aTag && image && image != defaultImageUrl && !image.includes("defaultnew")) {
 
                 var postId = aTag.match(/\d+/);
                 var parsePrice = price.match(/\d+/)[0];
@@ -83,12 +112,13 @@ var scrape = async (place, type, offset) => {
 
         await browser.close();
 
-        console.log("aqui", allPosts.length);
+        console.log("All post found:", allPosts.length);
 
         if (allPosts.length >= 30 && offset < 500) {
 
             scrape(place, type, offset + 30);
         } else {
+            console.log("Finished scraping " + place + " in " + type + " - " + offset);
             return false
         }
     } catch (e) {
@@ -104,7 +134,7 @@ async function createPostAndNotify(post) {
         throw new Error(err);
     }
 
-    sendTemplateEmail('APA', post.description, post.url);
+    // sendTemplateEmail('APA', post.description, post.url);
 
     return newPost;
 };
@@ -145,10 +175,10 @@ function sendTemplateEmail(subject, title, description) {
     })
     .catch(function (err) {
         console.log(err);
-    })
+    });
 };
 
-// startScraping();
+startScraping();
 
 // sendTemplateEmail('APA', 'test', 'test');
 
