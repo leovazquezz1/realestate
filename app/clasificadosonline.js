@@ -37,7 +37,7 @@ exports.clasificadosData = function (req, res) {
 };
 
 var scrape = async (place, type, offset) => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
     const page = await browser.newPage();
 
     try {
