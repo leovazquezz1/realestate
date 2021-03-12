@@ -85,9 +85,6 @@ var scrape = async (place, type, offset) => {
             var post = $(posts[i]);
             var postImage = $(postsImage[i]);
 
-            console.log(post.html());
-            console.log(postImage.html());
-
             var image = postImage.find("img").attr('src');
             var aTag = post.find("a").attr('href');
             var price = post.find("span span").text();
