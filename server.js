@@ -41,6 +41,6 @@ mongoose.connect(encodeURI(process.env.MONGOHQ_URL), options);
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'))
-    .once('open', listen);
+    .once('open', listen)
 
 module.exports = app;
