@@ -181,7 +181,7 @@ function sendTemplateEmail(subject, title, description) {
     });
 };
 
-startScraping();
+// startScraping();
 
 // sendTemplateEmail('APA', 'test', 'test');
 
