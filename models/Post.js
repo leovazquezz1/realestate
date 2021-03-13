@@ -10,6 +10,7 @@ var PostSchema = new Schema({
     url: String,
     price: Number,
     description: String,
+    longDescription: String,
     image: String,
     phone: String
 }, {

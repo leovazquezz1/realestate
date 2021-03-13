@@ -46,6 +46,8 @@ var scrape = async (place, type, offset) => {
     });
     const page = await browser.newPage();
 
+    await page.setCacheEnabled(false);
+
     try {
 
         page.setViewport({ width: 1280, height: 926 });
@@ -56,16 +58,17 @@ var scrape = async (place, type, offset) => {
             url += '&offset=' + offset;
         }
 
-        await page.goto(url, {
-                    waitUntil: 'networkidle2',
-                    timeout: 0
-                });
+        try {
+            var response = await page.goto(url, {
+                waitUntil: 'networkidle2',
+                timeout: 30000
+            });
+        } catch (error) {
+            console.log("error.name", error.name);
+            return
+        }
 
         console.log("Started scraping " + place + " in " + type + " - " + offset);
-
-        page.on('pageerror', pageerr => {
-            console.log('pageerror occurred: ', pageerr);
-        });
 
         page.on('error', err => {
             console.log('error happen at the page: ', err);
@@ -78,19 +81,17 @@ var scrape = async (place, type, offset) => {
         var $ = cheerio.load(content);
 
         var posts = $(".Ver14");
-        var postsImage = $(".Ver12C");
 
+        // Get all post from main result screen
         var allPosts = [];
         for (var i = 0; i < posts.length; i++) {
             var post = $(posts[i]);
-            var postImage = $(postsImage[i]);
 
-            var image = postImage.find("img").attr('src');
             var aTag = post.find("a").attr('href');
             var price = post.find("span span").text();
             var description = post.find("strong").text();
 
-            if (aTag && image && image != defaultImageUrl && !image.includes("defaultnew")) {
+            if (aTag) {
 
                 var postId = aTag.match(/\d+/);
                 var parsePrice = price.match(/\d+/)[0];
@@ -98,18 +99,53 @@ var scrape = async (place, type, offset) => {
                 allPosts.push({
                     id: postId[0],
                     url: aTag,
-                    image: image,
                     price: parsePrice,
                     description
                 });
             }
         };
+
+        // Get post information
+        for (var post of allPosts) {
+            try {
+                var response = await page.goto(post.url, {
+                    waitUntil: 'networkidle2',
+                    timeout: 30000
+                });
+    
+                var resultsSelector = '.Ver14nounder';
+                await page.waitForSelector(resultsSelector);
+
+                var content = await page.content();
+                var $ = cheerio.load(content);
+
+                var table = $('table:eq(3)');
+
+                var postComment = table.find('.comment');
+                var postImage = table.find("img").attr('src');
+                var postPhone = table.find('.nodecorationlink').html();
+                var longDescription = postComment.text().replace(/\s{2,}/g, ' ').replace('Ver más','').replace('...','').replace(/(\r\n|\n|\r)/gm, "");
+
+                post.phone = postPhone;
+                post.image = postImage;
+                post.longDescription = longDescription;
+            } catch (error) {
+                console.log("error.name", error.name);
+                return
+            }
+        };
+
+        // Filter post wanted
+        var allPosts = allPosts.filter(function(p) { return !p.image.includes('defaultnew') });
+
+        console.log("allPosts", allPosts);
         
+        // Add all post to DB
         allPosts.forEach(async function(post) {
             var postDB = await Post.findOne({id: post.id});
 
             if (!postDB) {
-                var notifyAndUpdate = await createPostAndNotify(post);
+                var notifyAndUpdate = await createPost(post);
             }
         });
 
@@ -130,15 +166,12 @@ var scrape = async (place, type, offset) => {
     }
 };
 
-async function createPostAndNotify(post) {
+async function createPost(post) {
     try {
         var newPost = await Post.create(post);
     } catch (err) {
         throw new Error(err);
     }
-
-    // sendTemplateEmail('APA', post.description, post.url);
-
     return newPost;
 };
 
@@ -181,10 +214,7 @@ function sendTemplateEmail(subject, title, description) {
     });
 };
 
-// startScraping();
-
-// sendTemplateEmail('APA', 'test', 'test');
-
+startScraping();
 
 const startScrapingJob = new CronJob('0 */5 * * *', function () {
     startScraping();
