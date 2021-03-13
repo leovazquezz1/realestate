@@ -64,7 +64,7 @@ var scrape = async (place, type, offset) => {
                 timeout: 30000
             });
         } catch (error) {
-            console.log("error.name", error.name);
+            throw new Error(error);
             return
         }
 
@@ -130,15 +130,13 @@ var scrape = async (place, type, offset) => {
                 post.image = postImage;
                 post.longDescription = longDescription;
             } catch (error) {
-                console.log("error.name", error.name);
+                throw new Error(error);
                 return
             }
         };
 
         // Filter post wanted
         var allPosts = allPosts.filter(function(p) { return !p.image.includes('defaultnew') });
-
-        console.log("allPosts", allPosts);
         
         // Add all post to DB
         allPosts.forEach(async function(post) {
@@ -214,7 +212,7 @@ function sendTemplateEmail(subject, title, description) {
     });
 };
 
-startScraping();
+// startScraping();
 
 const startScrapingJob = new CronJob('0 */5 * * *', function () {
     startScraping();
