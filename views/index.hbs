@@ -126,8 +126,10 @@
                         <thead>
                             <tr>
                                 <th>Price</th>
-                                <th>Description</th>
-                                <th>Image</th>
+                                <th class="no-sort">Title</th>
+                                <th class="no-sort">Description</th>
+                                <th class="no-sort">Image</th>
+                                <th>Created In DB</th>
                             </tr>
                         </thead>
                     </table>
@@ -154,7 +156,10 @@
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 <script type="text/javascript">
 
-    clasificadosView();
+    $('document').ready(function(){
+        "use strict";
+        clasificadosView();
+    })
 
     function clasificadosView() {
         var table = $('#drivers-table').DataTable({
@@ -175,8 +180,10 @@
             },
             columns: [
                 { "data": "price", "width": "10px" },
-                { "data": "description", "width": "120px" },
-                { "data": "image", "width": "120px" }
+                { "data": "description", "width": "150px" },
+                { "data": "longDescription", "width": "150px" },
+                { "data": "image", "width": "120px" },
+                { "data": "createdAt", "width": "40px" }
             ],
             columnDefs: [
                 {
@@ -189,17 +196,23 @@
                     render: function (data, type, row){
                         return '<a href="' + row.url + '">' + data + '</a>';
                     },
-                    targets: [0,1]
+                    targets: [1]
                 },
                 {
                     render: function (data, type, row){
                         return '<img src="' + data + '" alt="Image">';
                     },
-                    targets: 2
+                    targets: 3
+                },
+                {
+                    render: function (data, type, row){
+                        return moment(new Date(data).toISOString()).format("LLL");
+                    },
+                    targets: 4
                 },
                 {
                     defaultContent: '',
-                    targets: [0,1,2]
+                    targets: [0,1,2,3,4]
                 },
                 {
                     bSortable : false,
